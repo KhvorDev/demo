@@ -1,0 +1,516 @@
+<title>Фотозона RR / Генератор дипломов RR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --font-display:'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --font-body:'IBM Plex Sans', 'Segoe UI', sans-serif;
+    --font-mono:'IBM Plex Mono', 'SFMono-Regular', monospace;
+
+    --shell-bg:#0c0c0d;
+    --shell-line:#2a2a2c;
+    --shell-text:#dcdad4;
+    --shell-muted:#8b8a86;
+
+    /* Фотозона RR world: night finish-line board */
+    --pw-bg:#111319;
+    --pw-surface:#1a1d25;
+    --pw-surface-2:#20242e;
+    --pw-line:#2e3340;
+    --pw-ink:#f1efe9;
+    --pw-muted:#9aa0b3;
+    --pw-accent:#ff5a36;
+    --pw-accent-ink:#3a1206;
+
+    /* Генератор дипломов RR world: printed certificate on official paper */
+    --de-bg:#eef1f7;
+    --de-surface:#ffffff;
+    --de-surface-2:#e4e9f2;
+    --de-line:#c9d1e0;
+    --de-ink:#1c2130;
+    --de-muted:#5b6478;
+    --de-accent:#a8763a;
+    --de-accent-ink:#fff7ea;
+    --de-accent-2:#3b5bab;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--shell-bg);
+    color:var(--shell-text);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{font-family:var(--font-display);font-weight:800;text-wrap:balance;margin:0;}
+
+  img{max-width:100%;display:block;}
+
+  /* ---------- shell / switcher ---------- */
+  .shell{
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 24px 80px;
+  }
+  .masthead{
+    display:flex;
+    align-items:baseline;
+    justify-content:flex-end;
+    gap:16px;
+    flex-wrap:wrap;
+    padding-bottom:22px;
+    margin-bottom:28px;
+    border-bottom:1px solid var(--shell-line);
+  }
+  .tab-switch{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    font-family:var(--font-mono);
+    font-size:13px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:10px 18px;
+    border-radius:999px;
+    border:1px solid var(--shell-line);
+    background:transparent;
+    color:var(--shell-muted);
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease;
+  }
+  .tab-btn:hover{color:var(--shell-text);}
+  .tab-btn:focus-visible{outline:2px solid var(--shell-text);outline-offset:2px;}
+  .tab-btn[aria-selected="true"][data-for="presswall"]{
+    background:var(--pw-accent); border-color:var(--pw-accent); color:var(--pw-accent-ink);
+  }
+  .tab-btn[aria-selected="true"][data-for="diploma"]{
+    background:var(--de-accent); border-color:var(--de-accent); color:var(--de-accent-ink);
+  }
+
+  .panel{display:none;}
+  .panel.is-active{display:block;}
+
+  /* ================= PRESSWALL ================= */
+  #panel-presswall{
+    background:var(--pw-bg);
+    color:var(--pw-ink);
+    border-radius:18px;
+    padding:44px clamp(20px,4vw,56px) 52px;
+  }
+  .pw-eyebrow{
+    font-family:var(--font-mono);
+    font-size:13px;
+    letter-spacing:.18em;
+    color:var(--pw-accent);
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  #panel-presswall h1{
+    font-size:clamp(34px,4.6vw,56px);
+    line-height:1.02;
+    text-transform:uppercase;
+    letter-spacing:.01em;
+    max-width:30ch;
+  }
+  .pw-sub{
+    margin-top:18px;
+    max-width:62ch;
+    font-size:17px;
+    line-height:1.55;
+    color:var(--pw-muted);
+  }
+
+  .pw-hero{
+    margin-top:36px;
+    border:1px solid var(--pw-line);
+    background:var(--pw-surface);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .pw-hero img{width:100%;}
+  .pw-caption{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--pw-muted);
+    padding:12px 16px;
+    border-top:1px solid var(--pw-line);
+    background:var(--pw-surface-2);
+  }
+
+  .pw-features{
+    margin-top:52px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:0 40px;
+  }
+  .pw-feature{
+    padding:20px 0;
+    border-top:1px solid var(--pw-line);
+    display:grid;
+    grid-template-columns:14px 1fr;
+    gap:14px;
+  }
+  .pw-feature::before{
+    content:"";
+    width:8px;height:8px;
+    margin-top:7px;
+    background:var(--pw-accent);
+    clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+  }
+  .pw-feature h3{
+    grid-column:2;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:16px;
+    color:var(--pw-ink);
+    text-transform:none;
+    margin-bottom:6px;
+  }
+  .pw-feature p{
+    grid-column:2;
+    margin:0;
+    font-size:14.5px;
+    line-height:1.5;
+    color:var(--pw-muted);
+  }
+
+  .pw-gallery{
+    margin-top:52px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .pw-gallery figure{margin:0;border:1px solid var(--pw-line);border-radius:12px;overflow:hidden;background:var(--pw-surface);}
+  .pw-gallery img{width:100%;}
+  .pw-gallery figcaption{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--pw-muted);
+    padding:12px 16px;
+    border-top:1px solid var(--pw-line);
+    background:var(--pw-surface-2);
+  }
+
+  /* ================= DIPLOMAEDITOR ================= */
+  #panel-diploma{
+    background:var(--de-bg);
+    color:var(--de-ink);
+    border-radius:18px;
+    padding:44px clamp(20px,4vw,56px) 52px;
+  }
+  .de-eyebrow{
+    font-family:var(--font-mono);
+    font-size:13px;
+    letter-spacing:.18em;
+    color:var(--de-accent);
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  #panel-diploma h1{
+    font-size:clamp(34px,4.6vw,56px);
+    line-height:1.03;
+    letter-spacing:.005em;
+    max-width:32ch;
+    color:var(--de-ink);
+  }
+  .de-sub{
+    margin-top:18px;
+    max-width:62ch;
+    font-size:17px;
+    line-height:1.55;
+    color:var(--de-muted);
+  }
+
+  .de-hero{
+    margin-top:36px;
+    border:1px solid var(--de-line);
+    background:var(--de-surface);
+    border-radius:12px;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+  }
+  .de-hero img{width:100%;height:100%;object-fit:cover;}
+  .de-hero-note{
+    padding:28px 30px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:14px;
+    border-left:1px solid var(--de-line);
+    background:var(--de-surface-2);
+  }
+  .de-hero-note .tag{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--de-accent);
+  }
+  .de-hero-note p{margin:0;font-size:14.5px;line-height:1.55;color:var(--de-muted);}
+
+  .de-features{
+    margin-top:52px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:0 40px;
+  }
+  .de-feature{
+    padding:20px 0;
+    border-top:1px solid var(--de-line);
+    display:grid;
+    grid-template-columns:14px 1fr;
+    gap:14px;
+  }
+  .de-feature::before{
+    content:"";
+    width:8px;height:8px;
+    margin-top:7px;
+    border-radius:50%;
+    background:var(--de-accent);
+  }
+  .de-feature h3{
+    grid-column:2;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:16px;
+    color:var(--de-ink);
+    margin-bottom:6px;
+  }
+  .de-feature p{
+    grid-column:2;
+    margin:0;
+    font-size:14.5px;
+    line-height:1.5;
+    color:var(--de-muted);
+  }
+
+  .de-gallery{
+    margin-top:52px;
+  }
+  .de-gallery figure{margin:0;border:1px solid var(--de-line);border-radius:12px;overflow:hidden;background:var(--de-surface);}
+  .de-gallery img{width:100%;}
+  .de-gallery figcaption{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--de-muted);
+    padding:12px 16px;
+    border-top:1px solid var(--de-line);
+    background:var(--de-surface-2);
+  }
+
+  @media (max-width:760px){
+    .pw-features,.de-features{grid-template-columns:1fr;}
+    .pw-gallery{grid-template-columns:1fr;}
+    .de-hero{grid-template-columns:1fr;}
+    .de-hero-note{border-left:none;border-top:1px solid var(--de-line);}
+  }
+
+  @media (prefers-reduced-motion:no-preference){
+    .panel.is-active{animation:rise .35s ease both;}
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .zoomable{cursor:zoom-in;}
+
+  .lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(6,6,8,.88);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:5vh 5vw;
+    z-index:1000;
+    cursor:zoom-out;
+  }
+  .lightbox[hidden]{display:none;}
+  .lightbox img{
+    max-width:100%;
+    max-height:100%;
+    width:auto;
+    border-radius:10px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+    cursor:default;
+  }
+  .lightbox-close{
+    position:fixed;
+    top:20px;
+    right:24px;
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.3);
+    background:rgba(255,255,255,.08);
+    color:#f2f1ee;
+    font-family:var(--font-body);
+    font-size:20px;
+    line-height:1;
+    cursor:pointer;
+  }
+  .lightbox-close:focus-visible{outline:2px solid #f2f1ee;outline-offset:2px;}
+</style>
+
+<div class="shell">
+  <div class="masthead">
+    <div class="tab-switch" role="tablist" aria-label="Выбор продукта">
+      <button class="tab-btn" role="tab" data-for="presswall" aria-selected="true" id="tab-presswall">Фотозона RR</button>
+      <button class="tab-btn" role="tab" data-for="diploma" aria-selected="false" id="tab-diploma">Генератор дипломов RR</button>
+    </div>
+  </div>
+
+  <!-- ================= PRESSWALL ================= -->
+  <section class="panel is-active" id="panel-presswall" role="tabpanel" aria-labelledby="tab-presswall">
+    <div class="pw-eyebrow">Фотозона RR · экран финишной зоны</div>
+    <h1>Результат участника на большом экране — легко</h1>
+    <p class="pw-sub">Оператор вводит стартовый номер участника — его имя и результат сразу появляются на большом экране в зоне финиша или фотозоне, оформленном под бренд события и его спонсоров.</p>
+
+    <figure class="pw-hero">
+      <img class="zoomable" src="img/pw-editor.png" alt="Визуальный редактор шаблона Фотозона RR с логотипами спонсоров и панелью настроек текста">
+      <figcaption>Визуальный редактор шаблона: логотипы спонсоров, позиция, шрифт, интервалы и цвет — организатор настраивает сам, без разработчика.</figcaption>
+    </figure>
+
+    <div class="pw-features">
+      <div class="pw-feature">
+        <h3>Поиск по номеру участника</h3>
+        <p>Оператор вводит стартовый номер — результат подтягивается автоматически. Если номер закреплён за несколькими людьми, например в эстафете, система предложит выбрать нужного.</p>
+      </div>
+      <div class="pw-feature">
+        <h3>Обновление экрана в реальном времени</h3>
+        <p>Как только результат найден, он тут же появляется на публичном экране — без перезагрузки страницы и без задержки.</p>
+      </div>
+      <div class="pw-feature">
+        <h3>Визуальный редактор шаблона</h3>
+        <p>Текстовые блоки двигаются мышью с примагничиванием к центру и краям; шрифт, размер, интервалы, регистр и цвет задаются для каждого блока отдельно.</p>
+      </div>
+      <div class="pw-feature">
+        <h3>Свои шрифты, фон и брендинг спонсоров</h3>
+        <p>Можно загрузить фирменный шрифт и фоновую подложку с логотипами партнёров — под конкретное событие и его спонсорский пакет.</p>
+      </div>
+      <div class="pw-feature">
+        <h3>Четыре сценария показа в одном шаблоне</h3>
+        <p>Экран сам переключается между состояниями: результат есть, результат ещё не готов, заставка ожидания и отдельный вид для эстафетных команд.</p>
+      </div>
+      <div class="pw-feature">
+        <h3>Несколько экранов на одно событие</h3>
+        <p>Любое соотношение сторон, включая вертикальные экраны, и произвольное число независимых трансляций — например, на разных точках площадки одновременно.</p>
+      </div>
+    </div>
+
+    <div class="pw-gallery">
+      <figure>
+        <img class="zoomable" src="img/pw-operator.png" alt="Экран оператора Фотозона RR с полем ввода стартового номера и тестовыми данными">
+        <figcaption>Экран оператора — ввод номера и мгновенный тестовый прогон шаблона без реального поиска.</figcaption>
+      </figure>
+      <figure>
+        <img class="zoomable" src="img/pw-public.png" alt="Публичный экран Фотозона RR с результатом участника и логотипами спонсоров">
+        <figcaption>Публичный экран того же шаблона с реальным результатом участника, полученным вживую.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= DIPLOMAEDITOR ================= -->
+  <section class="panel" id="panel-diploma" role="tabpanel" aria-labelledby="tab-diploma">
+    <div class="de-eyebrow">Генератор дипломов RR · дипломы и грамоты</div>
+    <h1>Именной диплом каждому участнику — за секунды</h1>
+    <p class="de-sub">Организатор один раз собирает макет диплома, а дальше система сама подставляет имя, место, дистанцию и результат каждого участника и печатает документ.</p>
+
+    <div class="de-hero">
+      <img class="zoomable" src="img/de-editor.png" alt="Редактор диплома Генератор дипломов RR с подложкой и текстовыми переменными участника">
+      <div class="de-hero-note">
+        <div class="tag">Конструктор диплома</div>
+        <p>Каждое поле — имя, место, дистанция, результат — двигается и форматируется отдельно: позиция в миллиметрах, шрифт, размер, межстрочный и межбуквенный интервал, регистр, префикс и суффикс текста.</p>
+        <p>Подложка и шрифт — свои, загружаются организатором под конкретное событие; ориентация страницы настраивается отдельно.</p>
+      </div>
+    </div>
+
+    <div class="de-features">
+      <div class="de-feature">
+        <h3>Импорт данных без ручного ввода</h3>
+        <p>Результаты подтягиваются из готового протокола Excel — с проверкой, что все нужные колонки на месте, — либо напрямую из системы RussiaRunning, с выбором дистанции, категорий и числа призовых мест.</p>
+      </div>
+      <div class="de-feature">
+        <h3>Массовая печать в один клик</h3>
+        <p>Все дипломы формируются в PDF прямо в браузере и скачиваются одним архивом — без обращения к серверу.</p>
+      </div>
+      <div class="de-feature">
+        <h3>Правки прямо перед печатью</h3>
+        <p>Уже сформированный диплом можно открыть в предпросмотре и поправить данные конкретного участника — имя, место, результат — двойным кликом прямо по макету, без возврата к исходному файлу с результатами.</p>
+      </div>
+      <div class="de-feature">
+        <h3>Печать на готовой фотобумаге</h3>
+        <p>Подложку можно в любой момент скрыть одним кликом, оставив на макете только текстовые поля — удобно, если у организатора уже есть красиво напечатанные бланки на плотной фотобумаге и остаётся допечатать только данные участника.</p>
+      </div>
+      <div class="de-feature">
+        <h3>Библиотека шаблонов и подложек</h3>
+        <p>Неограниченное число шаблонов, привязанных к событию; шрифты и фоны переиспользуются между шаблонами одного организатора без повторной загрузки.</p>
+      </div>
+      <div class="de-feature">
+        <h3>Доступ и журнал изменений</h3>
+        <p>Вход по короткому коду доступа без пароля; каждое создание, изменение или удаление шаблона фиксируется в журнале аудита.</p>
+      </div>
+    </div>
+
+    <div class="de-gallery">
+      <figure>
+        <img class="zoomable" src="img/de-list.png" alt="Список шаблонов дипломов организатора в Генератор дипломов RR">
+        <figcaption>Все шаблоны организатора — в одном списке, с датой последнего изменения.</figcaption>
+      </figure>
+    </div>
+  </section>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox-close" id="lightbox-close" aria-label="Закрыть увеличенное изображение">&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+  (function(){
+    var buttons = document.querySelectorAll('.tab-btn');
+    var panels = {
+      presswall: document.getElementById('panel-presswall'),
+      diploma: document.getElementById('panel-diploma')
+    };
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var target = btn.getAttribute('data-for');
+        buttons.forEach(function(b){ b.setAttribute('aria-selected', b === btn ? 'true' : 'false'); });
+        Object.keys(panels).forEach(function(key){
+          panels[key].classList.toggle('is-active', key === target);
+        });
+      });
+    });
+  })();
+
+  (function(){
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightbox-img');
+    var closeBtn = document.getElementById('lightbox-close');
+
+    function open(img){
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.hidden = false;
+    }
+    function close(){
+      lightbox.hidden = true;
+      lightboxImg.src = '';
+    }
+
+    document.querySelectorAll('img.zoomable').forEach(function(img){
+      img.addEventListener('click', function(){ open(img); });
+    });
+    closeBtn.addEventListener('click', close);
+    lightbox.addEventListener('click', function(e){
+      if(e.target === lightbox){ close(); }
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && !lightbox.hidden){ close(); }
+    });
+  })();
+</script>
